@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message Relay</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
+    <script type="text/javascript">
+        const socket = io();
+
+        // Handle form submission and send message
+        document.getElementById('message-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const recipient = document.getElementById('recipient').value;
+            const message = document.getElementById('message').value;
+
+            socket.emit('message', {recipient: recipient, message: message});
+
+            document.getElementById('message').value = '';
+        });
+
+        // Handle incoming messages
+        socket.on('message', function (data) {
+            const sender = data.sender;
+            const message = data.message;
+
+            // Display the received message in the UI
+            const chatHistory = document.getElementById('chat-history');
+            const messageElement = document.createElement('div');
+            messageElement.innerText = `From ${sender}: ${message}`;
+            chatHistory.appendChild(messageElement);
+        });
+    </script>
+</head>
+<body>
+    <h1>Message Relay</h1>
+    <div id="chat-history"></div>
+    <form id="message-form">
+        <label for="recipient">Recipient:</label>
+        <input type="text" id="recipient" required><br>
+        <label for="message">Message:</label>
+        <input type="text" id="message" required><br>
+        <input type="submit" value="Send">
+    </form>
+</body>
+</html>
